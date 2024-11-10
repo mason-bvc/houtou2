@@ -225,6 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f40a3806292edd745bc891bd22b8b11a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 5
+  Speed: 8
   DestroyDistanceSquared: 100
   Direction: {x: 0, y: 1}
