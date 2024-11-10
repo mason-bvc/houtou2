@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
@@ -24,9 +23,9 @@ public class EnemySpawner : MonoBehaviour
 
         fairy.transform.position = new Vector3(Util.ValueFromMinusOneToPositiveOne, Util.ValueFromMinusOneToPositiveOne, Util.ValueFromMinusOneToPositiveOne).normalized * SPAWN_DISTANCE_FROM_CENTER_DEFAULT;
 
-        if (++_fairyCount < 3)
-        {
+        // if (++_fairyCount < 3)
+        // {
             StartCoroutine(SpawnWaiter());
-        }
+        // }
     }
 }

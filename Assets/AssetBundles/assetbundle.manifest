@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 1649565467
+CRC: 3719427873
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 01374c0fc9a3d344ad82c848d178d0d3
+    Hash: a6f798d2632c1a0d87ffe8cdd9cff3af
   TypeTreeHash:
     serializedVersion: 2
-    Hash: c3787aa079a9cbfc6a11cdd8636b4752
+    Hash: fd38bfd3300714e3430909c4717969ec
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 01374c0fc9a3d344ad82c848d178d0d3
+    Hash: a6f798d2632c1a0d87ffe8cdd9cff3af
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -33,7 +33,11 @@ ClassTypes:
 - Class: 95
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 11500000, guid: 0a13344f39846f84fa909f0f4a45c1c7, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: f4ceaa7b7dedfb24fb98a7ff82a3c7ba, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ff25abd507d374c44a3236d678153b2a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f40a3806292edd745bc891bd22b8b11a, type: 3}
 - Class: 115
@@ -44,6 +48,7 @@ ClassTypes:
   Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers: []
 Assets:
+- Assets/Textures/Corinne.png
 - Assets/Prefabs/PlayerBullet.prefab
 - Assets/Prefabs/Fairy.prefab
 Dependencies: []
