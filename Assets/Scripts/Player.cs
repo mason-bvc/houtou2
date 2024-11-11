@@ -3,6 +3,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     private Sprite[] _sprites;
+
     private int _spriteRow;
     private Vector2 _moveAxes;
     private Vector2 _velocity;
@@ -10,6 +11,7 @@ public class Player : MonoBehaviour
     private Transform _bulletSpawnTransform;
     private Rigidbody2D _body;
     private SpriteRenderer _spriteRenderer;
+    private AudioSource _audioSource;
     private PlayerSprite _playerSprite;
     private GameObject _bulletPrefab;
 
@@ -24,6 +26,7 @@ public class Player : MonoBehaviour
         _sprites = Game.AssetBundle.LoadAssetWithSubAssets<Sprite>("Corinne");
         _aimTransform = transform.Find("AimTransform");
         _bulletSpawnTransform = _aimTransform?.Find("BulletSpawnTransform");
+        _audioSource = GetComponent<AudioSource>();
 
         Transform sprite = transform.Find("Sprite");
 
@@ -85,6 +88,7 @@ public class Player : MonoBehaviour
 
             bulletGameObj.transform.position = _bulletSpawnTransform.position;
             bulletComponent.Direction = _aimTransform.up;
+            _audioSource.PlayOneShot(Resources.Audio.PlayerShoot);
         }
 
         _spriteRenderer.sprite = _sprites[_spriteRow * 3 + _playerSprite.Frame];

@@ -7,6 +7,8 @@ public class Game : MonoBehaviour
     public static AssetBundle AssetBundle { get; protected set; }
     public static Player Player { get; protected set; }
 
+    private static AudioSource _audioSource;
+
     // Rationale: When you put the responsibility on either object to delete
     // itself based on the others' tag in their own scripts, you do two things.
     // Number one, you rely on the execution order of the scripts of the
@@ -45,14 +47,32 @@ public class Game : MonoBehaviour
     {
         if (collider1.CompareTag(Global.TAG_ENEMY) && collider2.CompareTag(Global.TAG_PLAYER_BULLET))
         {
+            for (var i = 0; i < 3; i++)
+            {
+                var bird = Instantiate(Resources.Prefabs.Bird);
+                var birdComponent = bird.GetComponent<Bird>();
+
+                bird.transform.position = collider1.transform.position;
+                birdComponent.Direction = Util.RandomDirection;
+            }
+
             Destroy(collider1.transform.root.gameObject);
             Destroy(collider2.transform.root.gameObject);
+            _audioSource.PlayOneShot(Resources.Audio.Explosion1);
         }
     }
 
     protected void Start()
     {
         AssetBundle = AssetBundle.LoadFromFile("Assets/AssetBundles/assetbundle");
+
+        Resources.Audio.PlayerShoot = AssetBundle.LoadAsset<AudioClip>("PlayerShoot");
+        Resources.Audio.FairyDie = AssetBundle.LoadAsset<AudioClip>("FairyDie");
+        Resources.Audio.Explosion1 = AssetBundle.LoadAsset<AudioClip>("Explosion1");
+
+        Resources.Prefabs.Bird = AssetBundle.LoadAsset<GameObject>("Bird");
+
+        _audioSource = GetComponent<AudioSource>();
         Player = FindObjectOfType<Player>();
     }
 }

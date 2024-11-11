@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 2394047924
+CRC: 147050684
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 26bc1deed4fe0d14127cc9a230ad8de5
+    Hash: 0ee3067a884e559951bee6b811aa16c0
   TypeTreeHash:
     serializedVersion: 2
-    Hash: fd38bfd3300714e3430909c4717969ec
+    Hash: 9f46799b2614f8e12e659a2cb3a39bf2
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 26bc1deed4fe0d14127cc9a230ad8de5
+    Hash: 0ee3067a884e559951bee6b811aa16c0
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -28,6 +28,8 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 74
   Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
 - Class: 91
   Script: {instanceID: 0}
 - Class: 95
@@ -40,6 +42,10 @@ ClassTypes:
   Script: {fileID: 11500000, guid: ff25abd507d374c44a3236d678153b2a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f40a3806292edd745bc891bd22b8b11a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a497a045942970e409e5399f3ee2c999, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c875e407da82415498beee8bb7875920, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 212
@@ -49,6 +55,10 @@ ClassTypes:
 SerializeReferenceClassIdentifiers: []
 Assets:
 - Assets/Textures/Corinne.png
+- Assets/Audio/Explosion1.wav
 - Assets/Prefabs/PlayerBullet.prefab
+- Assets/Prefabs/Bird.prefab
+- Assets/Audio/PlayerShoot.wav
 - Assets/Prefabs/Fairy.prefab
+- Assets/Audio/FairyDie.wav
 Dependencies: []
