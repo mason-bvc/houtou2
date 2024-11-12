@@ -1,13 +1,38 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.U2D;
+using UnityEngine.UI;
 
 // Note: not implementing a true singleton because I deemed it unnecessary.
 
 public class Game : MonoBehaviour
 {
-    public static AssetBundle AssetBundle { get; protected set; }
-    public static Player Player { get; protected set; }
-
+    //
+    // components
+    //
     private static AudioSource _audioSource;
+
+    //
+    // dialog stuff
+    //
+    private static TMP_Text _dialog;
+    private static string _dialogText = "";
+    private static float _dialogTextVisibleRatio;
+    private static float _dialogT;
+    private static Image _dialogPortrait;
+
+    //
+    // resources
+    //
+    public static AssetBundle AssetBundle { get; protected set; }
+
+    //
+    // game state
+    //
+    private static FunCamera _funCamera;
+    private static EnemySpawner _enemySpawner;
+    public static Player Player { get; protected set; }
 
     // Rationale: When you put the responsibility on either object to delete
     // itself based on the others' tag in their own scripts, you do two things.
@@ -47,18 +72,28 @@ public class Game : MonoBehaviour
     {
         if (collider1.CompareTag(Global.TAG_ENEMY) && collider2.CompareTag(Global.TAG_PLAYER_BULLET))
         {
-            for (var i = 0; i < 3; i++)
-            {
-                var bird = Instantiate(Resources.Prefabs.Bird);
-                var birdComponent = bird.GetComponent<Bird>();
+            // TODO: do this only when it's a fairy
+            // for (var i = 0; i < 3; i++)
+            // {
+            //     var bird = Instantiate(Resources.Prefabs.Bird);
+            //     var birdComponent = bird.GetComponent<Bird>();
 
-                bird.transform.position = collider1.transform.position;
-                birdComponent.Direction = Util.RandomDirection;
-            }
+            //     bird.transform.position = collider1.transform.position;
+            //     birdComponent.Direction = Util.RandomDirection;
+            // }
 
             Destroy(collider1.transform.root.gameObject);
             Destroy(collider2.transform.root.gameObject);
             _audioSource.PlayOneShot(Resources.Audio.Explosion1);
+
+            return;
+        }
+
+        if (collider1.CompareTag(Global.TAG_PLAYER) && collider2.CompareTag(Global.TAG_HURT_PLAYER))
+        {
+            collider1.transform.root.GetComponent<Health>().Damage(25.0F);
+            _audioSource.PlayOneShot(Resources.Audio.PlayerHurt);
+            _funCamera.Shake();
         }
     }
 
@@ -66,13 +101,52 @@ public class Game : MonoBehaviour
     {
         AssetBundle = AssetBundle.LoadFromFile("Assets/AssetBundles/assetbundle");
 
+        Resources.Audio.Explosion1 = AssetBundle.LoadAsset<AudioClip>("Explosion1");
+        Resources.Audio.PlayerHurt = AssetBundle.LoadAsset<AudioClip>("PlayerHurt");
         Resources.Audio.PlayerShoot = AssetBundle.LoadAsset<AudioClip>("PlayerShoot");
         Resources.Audio.FairyDie = AssetBundle.LoadAsset<AudioClip>("FairyDie");
-        Resources.Audio.Explosion1 = AssetBundle.LoadAsset<AudioClip>("Explosion1");
-
         Resources.Prefabs.Bird = AssetBundle.LoadAsset<GameObject>("Bird");
+        Resources.Prefabs.Fairy = AssetBundle.LoadAsset<GameObject>("Fairy");
+        Resources.Sprites.CorrinePortrait = AssetBundle.LoadAsset<Sprite>("CorinnePortrait");
+        Resources.Sprites.LaStakePortrait = AssetBundle.LoadAsset<Sprite>("LaStakePortrait");
 
         _audioSource = GetComponent<AudioSource>();
+        _dialog = GameObject.Find("Canvas/Dialog")?.GetComponent<TMP_Text>();
+        _dialogPortrait = GameObject.Find("Canvas/Portrait")?.GetComponent<Image>();
+        _enemySpawner = GameObject.Find("EnemySpawner")?.GetComponent<EnemySpawner>();
+        _funCamera = GameObject.Find("Camera")?.GetComponent<FunCamera>();
         Player = FindObjectOfType<Player>();
+
+        StartCoroutine(Sequence1());
+    }
+
+    protected void Update()
+    {
+        _dialogT += Time.deltaTime;
+        _dialogT = Mathf.Clamp(_dialogT, 0, 1);
+        _dialogTextVisibleRatio = Mathf.Lerp(0, 1, _dialogT);
+        _dialog.text = _dialogText[..(int)(_dialogText.Length * _dialogTextVisibleRatio)];
+    }
+
+    private IEnumerator SetDialog(string text, float waitSeconds, Sprite portrait)
+    {
+        _dialogPortrait.gameObject.SetActive(true);
+        _dialogPortrait.sprite = portrait;
+        _dialogText = text;
+        _dialogT = 0;
+
+        yield return new WaitForSeconds(waitSeconds);
+
+        _dialogText = "";
+        _dialogPortrait.gameObject.SetActive(false);
+    }
+
+    private IEnumerator Sequence1()
+    {
+        yield return SetDialog("Ohohoh! Corinne, welcome to your personal Hell!", 5.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("You're toast when I get a hold of you, bloodsucker.", 5.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("I think not, darling...", 2.0F, Resources.Sprites.LaStakePortrait);
+        StartCoroutine(_enemySpawner.SpawnWaiter());
+        yield return SetDialog("FAIRIES! Dispose of her at once!", 5.0F, Resources.Sprites.LaStakePortrait);
     }
 }

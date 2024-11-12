@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -14,6 +15,8 @@ public class Player : MonoBehaviour
     private AudioSource _audioSource;
     private PlayerSprite _playerSprite;
     private GameObject _bulletPrefab;
+    private Health _health;
+    private bool _isInvincible;
 
     [SerializeField]
     private float _speed = 0.25F;
@@ -27,6 +30,9 @@ public class Player : MonoBehaviour
         _aimTransform = transform.Find("AimTransform");
         _bulletSpawnTransform = _aimTransform?.Find("BulletSpawnTransform");
         _audioSource = GetComponent<AudioSource>();
+        _body = GetComponent<Rigidbody2D>();
+        _health = GetComponent<Health>();
+        _health.Damaged.AddListener(OnDamaged);
 
         Transform sprite = transform.Find("Sprite");
 
@@ -34,8 +40,20 @@ public class Player : MonoBehaviour
         _playerSprite = sprite?.GetComponent<PlayerSprite>();
         _bulletPrefab = Game.AssetBundle.LoadAsset<GameObject>("PlayerBullet");
 
-        Transform hurtBox = transform.Find("HurtBox");
+        var hurtBox = transform.Find("HurtBox");
+
         _body = hurtBox?.GetComponent<Rigidbody2D>();
+
+        var collider2d = hurtBox?.GetComponent<Collider2D>();
+        var collider2dGameObj = hurtBox?.GetComponent<Collider2DGameObject>();
+
+        collider2dGameObj?.TriggerEntered2D.AddListener((Collider2D other) =>
+        {
+            if (!_isInvincible)
+            {
+                Game.HandleTriggerEnter2D(collider2d, other);
+            }
+        });
     }
 
     protected void Update()
@@ -45,6 +63,23 @@ public class Player : MonoBehaviour
         _moveAxes = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         _velocity += moveVector;
         transform.Translate(_velocity * Time.deltaTime);
+
+        if (Mathf.Abs(transform.position.x) > 5F)
+        {
+            var newPosition = transform.position;
+
+            newPosition.x = -transform.position.x;
+            transform.position = newPosition;
+        }
+
+        if (Mathf.Abs(transform.position.y) > 4F)
+        {
+            var newPosition = transform.position;
+
+            newPosition.y = -transform.position.y;
+            transform.position = newPosition;
+        }
+
         _velocity = Vector2.Lerp(_velocity, Vector2.zero, _deceleration * Time.deltaTime);
 
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
@@ -92,5 +127,19 @@ public class Player : MonoBehaviour
         }
 
         _spriteRenderer.sprite = _sprites[_spriteRow * 3 + _playerSprite.Frame];
+    }
+
+    private void OnDamaged()
+    {
+        StartCoroutine(HandlePostDamaged());
+    }
+
+    private IEnumerator HandlePostDamaged()
+    {
+        _isInvincible = true;
+        _spriteRenderer.color = new Color(1.0F, 1.0F, 1.0F, 0.5F);
+        yield return new WaitForSeconds(3.0F);
+        _isInvincible = false;
+        _spriteRenderer.color = new Color(1.0F, 1.0F, 1.0F, 1.0F);
     }
 }
