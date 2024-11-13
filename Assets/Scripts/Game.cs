@@ -1,7 +1,6 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.U2D;
 using UnityEngine.UI;
 
 // Note: not implementing a true singleton because I deemed it unnecessary.
@@ -11,7 +10,7 @@ public class Game : MonoBehaviour
     //
     // components
     //
-    private static AudioSource _audioSource;
+    public static AudioSource AudioSource;
 
     //
     // dialog stuff
@@ -23,6 +22,12 @@ public class Game : MonoBehaviour
     private static Image _dialogPortrait;
 
     //
+    // hud stuff
+    //
+    private static TMP_Text _wave;
+    private static Image[] _hearts;
+
+    //
     // resources
     //
     public static AssetBundle AssetBundle { get; protected set; }
@@ -30,8 +35,10 @@ public class Game : MonoBehaviour
     //
     // game state
     //
+    private static Background _background;
+    private static EnemySpawner _birdSpawner;
+    private static EnemySpawner _fairySpawner;
     private static FunCamera _funCamera;
-    private static EnemySpawner _enemySpawner;
     public static Player Player { get; protected set; }
 
     // Rationale: When you put the responsibility on either object to delete
@@ -68,10 +75,10 @@ public class Game : MonoBehaviour
     // * you could defer the deletion of the objects to the end of the frame,
     // but you still run into problem number two.
 
-    public static void HandleTriggerEnter2D(Collider2D collider1, Collider2D collider2)
-    {
-        if (collider1.CompareTag(Global.TAG_ENEMY) && collider2.CompareTag(Global.TAG_PLAYER_BULLET))
-        {
+    // public static void HandleTriggerEnter2D(Collider2D collider1, Collider2D collider2)
+    // {
+    //     if (collider1.CompareTag(Global.TAG_ENEMY) && collider2.CompareTag(Global.TAG_PLAYER_BULLET))
+        // {
             // TODO: do this only when it's a fairy
             // for (var i = 0; i < 3; i++)
             // {
@@ -82,19 +89,60 @@ public class Game : MonoBehaviour
             //     birdComponent.Direction = Util.RandomDirection;
             // }
 
-            Destroy(collider1.transform.root.gameObject);
-            Destroy(collider2.transform.root.gameObject);
-            _audioSource.PlayOneShot(Resources.Audio.Explosion1);
+    //         Destroy(collider1.transform.root.gameObject);
+    //         Destroy(collider2.transform.root.gameObject);
+    //         _audioSource.PlayOneShot(Resources.Audio.Explosion1);
 
+    //         return;
+    //     }
+
+    //     if (collider1.CompareTag(Global.TAG_PLAYER) && collider2.CompareTag(Global.TAG_HURT_PLAYER))
+    //     {
+    //         collider1.transform.root.GetComponent<Health>().Damage(25.0F);
+    //         _audioSource.PlayOneShot(Resources.Audio.PlayerHurt);
+    //         _funCamera.Shake();
+    //     }
+    // }
+
+    public static float CalculateDamage(GameObject damager, GameObject victim)
+    {
+        if (damager.CompareTag(Global.TAG_PLAYER_BULLET) && victim.CompareTag(Global.TAG_ENEMY))
+        {
+            return 25.0F;
+        }
+
+        if (victim.CompareTag(Global.TAG_PLAYER))
+        {
+            if (damager.CompareTag(Global.TAG_ENEMY) || damager.CompareTag(Global.TAG_HURT_PLAYER))
+            {
+                return 25.0F;
+            }
+        }
+
+        Debug.Log("No appropriate damage found");
+
+        return 0.0F;
+    }
+
+    private static void OnPlayerDamaged()
+    {
+        for (var i = _hearts.Length - 1; i >= 0; i--)
+        {
+            _hearts[i].gameObject.SetActive(true);
+
+            if (Player.Health.GetHealth() / Player.Health.InitialHealth * _hearts.Length <= i)
+            {
+                _hearts[i].gameObject.SetActive(false);
+            }
+        }
+
+        if (Player.Health.GetHealth() <= 0.0F)
+        {
+            Destroy(GameObject.Find("Playism"));
             return;
         }
 
-        if (collider1.CompareTag(Global.TAG_PLAYER) && collider2.CompareTag(Global.TAG_HURT_PLAYER))
-        {
-            collider1.transform.root.GetComponent<Health>().Damage(25.0F);
-            _audioSource.PlayOneShot(Resources.Audio.PlayerHurt);
-            _funCamera.Shake();
-        }
+        _funCamera.Shake();
     }
 
     protected void Start()
@@ -110,14 +158,30 @@ public class Game : MonoBehaviour
         Resources.Sprites.CorrinePortrait = AssetBundle.LoadAsset<Sprite>("CorinnePortrait");
         Resources.Sprites.LaStakePortrait = AssetBundle.LoadAsset<Sprite>("LaStakePortrait");
 
-        _audioSource = GetComponent<AudioSource>();
-        _dialog = GameObject.Find("Canvas/Dialog")?.GetComponent<TMP_Text>();
-        _dialogPortrait = GameObject.Find("Canvas/Portrait")?.GetComponent<Image>();
-        _enemySpawner = GameObject.Find("EnemySpawner")?.GetComponent<EnemySpawner>();
+        AudioSource = GetComponent<AudioSource>();
+        _background = GameObject.Find("Playism/Background")?.GetComponent<Background>();
+        _dialog = GameObject.Find("Playism/Canvas/Dialog")?.GetComponent<TMP_Text>();
+        _dialogPortrait = GameObject.Find("Playism/Canvas/Portrait")?.GetComponent<Image>();
+        _birdSpawner = GameObject.Find("Playism/BirdSpawner")?.GetComponent<EnemySpawner>();
+        _fairySpawner = GameObject.Find("Playism/FairySpawner")?.GetComponent<EnemySpawner>();
         _funCamera = GameObject.Find("Camera")?.GetComponent<FunCamera>();
+        _hearts = GameObject.Find("Playism/Canvas/Hearts").GetComponentsInChildren<Image>();
+        _wave = GameObject.Find("Playism/Canvas/WaveText")?.GetComponent<TMP_Text>();
         Player = FindObjectOfType<Player>();
 
+        static IEnumerator PostPlayerInit()
+        {
+            yield return new WaitForEndOfFrame();
+            Player.Health.Damaged.AddListener(OnPlayerDamaged);
+        }
+
+        StartCoroutine(PostPlayerInit());
         StartCoroutine(Sequence1());
+        StartCoroutine(Sequence2());
+        StartCoroutine(Sequence3());
+        StartCoroutine(Sequence4());
+        StartCoroutine(Sequence5());
+        StartCoroutine(Sequence6());
     }
 
     protected void Update()
@@ -146,7 +210,54 @@ public class Game : MonoBehaviour
         yield return SetDialog("Ohohoh! Corinne, welcome to your personal Hell!", 5.0F, Resources.Sprites.LaStakePortrait);
         yield return SetDialog("You're toast when I get a hold of you, bloodsucker.", 5.0F, Resources.Sprites.CorrinePortrait);
         yield return SetDialog("I think not, darling...", 2.0F, Resources.Sprites.LaStakePortrait);
-        StartCoroutine(_enemySpawner.SpawnWaiter());
+        StartCoroutine(_birdSpawner.BeginSpawn());
         yield return SetDialog("FAIRIES! Dispose of her at once!", 5.0F, Resources.Sprites.LaStakePortrait);
+        _background.Color = Color.blue / 2.0F;
+    }
+
+    private IEnumerator Sequence2()
+    {
+        // TODO: ramp up
+        yield return new WaitForSeconds(58.0F);
+        yield return SetDialog("Here they come.", 3.0F, Resources.Sprites.CorrinePortrait);
+        _fairySpawner.IsStopped = false;
+        StartCoroutine(_fairySpawner.BeginSpawn());
+        _birdSpawner.CurrentMaxEnemies = 10;
+    }
+
+    private IEnumerator Sequence3()
+    {
+        // TODO: ramp up
+        yield return new WaitForSeconds(60.0F * 2.0F + 20.0F);
+        yield return SetDialog("Having trouble keeping up, darling?", 4.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("This is child's play.", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("Such false bravado...", 4.0F, Resources.Sprites.LaStakePortrait);
+        _wave.text = "Wave 2";
+        _fairySpawner.CurrentMaxEnemies = 10;
+        _birdSpawner.CurrentMaxEnemies = 15;
+        _background.Color = Color.green / 2.0F;
+    }
+
+    private IEnumerator Sequence4()
+    {
+        yield return new WaitForSeconds(60.0F * 3.0F + 16.0F);
+
+        _fairySpawner.CurrentMaxEnemies = 25;
+        _birdSpawner.CurrentMaxEnemies = 10;
+        _background.Color /= 2.0F;
+    }
+
+    private IEnumerator Sequence5()
+    {
+        yield return new WaitForSeconds(60.0F * 4.0F);
+
+        _birdSpawner.CurrentMaxEnemies = 25;
+        _background.Color *= 2.0F;
+    }
+
+    private IEnumerator Sequence6()
+    {
+        yield return new WaitForSeconds(60.0F * 4.0F + 6.0F);
+        _background.Color = new Color(1.0F, 1.0F, 0.0F, 1.0F) / 2.0F;
     }
 }

@@ -3,6 +3,7 @@ Shader "Unlit/Background"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _MainColor ("Color", Color) = (0, 0, 1.0, 1.0)
     }
 
     SubShader
@@ -36,6 +37,7 @@ Shader "Unlit/Background"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            fixed4 _MainColor;
 
             fixed greyscale(fixed channel, fixed str)
             {
@@ -74,9 +76,7 @@ Shader "Unlit/Background"
                 float c3 = abs(sin(c2+cos(mov1+mov2+c2)+cos(mov2)+sin(x/1000.)));
                 fixed4 c = fixed4(c1, c2, c3, 1);
 
-                c.rgb /= 8.0;
-                c.r = 0;
-                c.g = 0;
+                c *= _MainColor;
 
                 return c;
             }

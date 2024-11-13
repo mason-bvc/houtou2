@@ -1,24 +1,45 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour
 {
-    private const float SPAWN_DISTANCE_FROM_CENTER_DEFAULT = 10.0F;
-    private const float SPAWN_COOLDOWN_SECONDS_DEFAULT = 0.4F;
+    protected const float SPAWN_DISTANCE_FROM_CENTER_DEFAULT = 10.0F;
+    protected const float SPAWN_COOLDOWN_SECONDS_DEFAULT = 0.4F;
 
-    private int _fairyCount;
+    private List<GameObject> _enemies = new();
+    public int CurrentMaxEnemies = 5;
+    public bool IsStopped;
 
-    public IEnumerator SpawnWaiter()
+    [SerializeField]
+    public GameObject EnemyPrefab;
+
+    protected virtual GameObject InstantiateEnemy()
     {
+        var enemy = Instantiate(EnemyPrefab);
+        enemy.transform.position = Util.RandomDirection * SPAWN_DISTANCE_FROM_CENTER_DEFAULT;
+        return enemy;
+    }
+
+    public IEnumerator BeginSpawn()
+    {
+        if (IsStopped)
+        {
+            yield return null;
+        }
+
+        if (_enemies.Count >= CurrentMaxEnemies)
+        {
+            _enemies.RemoveAll(go => go == null);
+        }
+
         yield return new WaitForSeconds(SPAWN_COOLDOWN_SECONDS_DEFAULT);
 
-        var fairy = Instantiate(Resources.Prefabs.Fairy);
+        if (_enemies.Count < CurrentMaxEnemies)
+        {
+            _enemies.Add(InstantiateEnemy());
+        }
 
-        fairy.transform.position = Util.RandomDirection * SPAWN_DISTANCE_FROM_CENTER_DEFAULT;
-
-        // if (++_fairyCount < 3)
-        // {
-            StartCoroutine(SpawnWaiter());
-        // }
+        StartCoroutine(BeginSpawn());
     }
 }

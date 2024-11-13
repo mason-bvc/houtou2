@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 9167284209698422523}
   - component: {fileID: 6403991466150054747}
   - component: {fileID: 4536503040590263945}
+  - component: {fileID: 8465709378699896156}
   m_Layer: 0
   m_Name: HitBox
   m_TagString: PlayerBullet
@@ -95,6 +96,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &8465709378699896156
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6669443340159613073}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff25abd507d374c44a3236d678153b2a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7960230094459606308
 GameObject:
   m_ObjectHideFlags: 0

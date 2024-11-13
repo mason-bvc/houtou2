@@ -6,13 +6,13 @@ public class Health : MonoBehaviour
     private float _health;
 
     [SerializeField]
-    private float _initialHealth = 100.0F;
+    public float InitialHealth = 100.0F;
 
     public UnityEvent Damaged;
 
     protected void Start()
     {
-        _health = _initialHealth;
+        _health = InitialHealth;
     }
 
     public float GetHealth()

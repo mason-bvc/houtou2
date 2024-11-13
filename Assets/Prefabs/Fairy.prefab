@@ -9,11 +9,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2573242246047322833}
+  - component: {fileID: 4233212328661783617}
   - component: {fileID: 1863634478695210302}
   - component: {fileID: 126418531174463744}
   m_Layer: 0
   m_Name: Fairy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -36,6 +37,22 @@ Transform:
   - {fileID: 8242461500668620713}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4233212328661783617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 613054040119586349}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a51bbc12e8697f849a8e485cd8811242, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitialHealth: 50
+  Damaged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &1863634478695210302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -48,6 +65,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a13344f39846f84fa909f0f4a45c1c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HurtBox: {fileID: 5580302556357327207}
 --- !u!114 &126418531174463744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -168,7 +186,6 @@ GameObject:
   - component: {fileID: 4003471305368677025}
   - component: {fileID: 3472590518946009814}
   - component: {fileID: 4165196683447385}
-  - component: {fileID: 1577147029331906721}
   m_Layer: 0
   m_Name: HurtBox
   m_TagString: Enemy
@@ -263,18 +280,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ff25abd507d374c44a3236d678153b2a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1577147029331906721
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5580302556357327207}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f864a027668c454a94ef0ae5e68fb80, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8375682738915585279

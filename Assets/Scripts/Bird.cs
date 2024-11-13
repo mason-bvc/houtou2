@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Bird : MonoBehaviour, IDirectional2D
+public class Bird : Mob, IDirectional2D
 {
     public Vector2 Direction { get; set; }
 

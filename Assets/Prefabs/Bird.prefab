@@ -10,10 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1231367314064631640}
   - component: {fileID: 2979978917552532446}
+  - component: {fileID: 9111968754332575556}
   - component: {fileID: 7014081600291726554}
   m_Layer: 0
   m_Name: Bird
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -48,6 +49,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a497a045942970e409e5399f3ee2c999, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HurtBox: {fileID: 7081162161623550896}
+--- !u!114 &9111968754332575556
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1294347952669447897}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a51bbc12e8697f849a8e485cd8811242, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  InitialHealth: 1
+  Damaged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &7014081600291726554
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +185,6 @@ GameObject:
   - component: {fileID: 9046571774127423775}
   - component: {fileID: 5712482398518889962}
   - component: {fileID: 1676026765475820216}
-  - component: {fileID: 39179185798520345}
   - component: {fileID: 8036529629011440025}
   m_Layer: 0
   m_Name: HurtBox
@@ -253,18 +270,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &39179185798520345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7081162161623550896}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f864a027668c454a94ef0ae5e68fb80, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &8036529629011440025
 MonoBehaviour:
   m_ObjectHideFlags: 0

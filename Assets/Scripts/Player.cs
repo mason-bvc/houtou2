@@ -15,8 +15,8 @@ public class Player : MonoBehaviour
     private AudioSource _audioSource;
     private PlayerSprite _playerSprite;
     private GameObject _bulletPrefab;
-    private Health _health;
     private bool _isInvincible;
+    public Health Health;
 
     [SerializeField]
     private float _speed = 0.25F;
@@ -31,8 +31,8 @@ public class Player : MonoBehaviour
         _bulletSpawnTransform = _aimTransform?.Find("BulletSpawnTransform");
         _audioSource = GetComponent<AudioSource>();
         _body = GetComponent<Rigidbody2D>();
-        _health = GetComponent<Health>();
-        _health.Damaged.AddListener(OnDamaged);
+        Health = GetComponent<Health>();
+        Health.Damaged.AddListener(OnDamaged);
 
         Transform sprite = transform.Find("Sprite");
 
@@ -51,7 +51,8 @@ public class Player : MonoBehaviour
         {
             if (!_isInvincible)
             {
-                Game.HandleTriggerEnter2D(collider2d, other);
+                Health.Damage(Game.CalculateDamage(other.gameObject, gameObject));
+                Game.AudioSource.PlayOneShot(Resources.Audio.PlayerHurt);
             }
         });
     }
@@ -118,7 +119,7 @@ public class Player : MonoBehaviour
 
         if (Input.GetButtonDown("Fire1"))
         {
-            var bulletGameObj = Instantiate(_bulletPrefab);
+            var bulletGameObj = Instantiate(_bulletPrefab, GameObject.Find("Playism").transform);
             var bulletComponent = bulletGameObj.GetComponent<Bullet>();
 
             bulletGameObj.transform.position = _bulletSpawnTransform.position;
