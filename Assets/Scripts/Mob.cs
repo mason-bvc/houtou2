@@ -20,7 +20,7 @@ public abstract class Mob : MonoBehaviour
     {
         if (Health.GetHealth() <= 0.0F)
         {
-            Game.AudioSource.PlayOneShot(Resources.Audio.Explosion1);
+            Game.Instance.AudioSource.PlayOneShot(Resources.Audio.Explosion1);
             Destroy(gameObject);
         }
     }

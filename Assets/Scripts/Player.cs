@@ -14,9 +14,10 @@ public class Player : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private AudioSource _audioSource;
     private PlayerSprite _playerSprite;
-    private GameObject _bulletPrefab;
     private bool _isInvincible;
+
     public Health Health;
+    public bool IsStopped;
 
     [SerializeField]
     private float _speed = 0.25F;
@@ -38,7 +39,6 @@ public class Player : MonoBehaviour
 
         _spriteRenderer = sprite?.GetComponent<SpriteRenderer>();
         _playerSprite = sprite?.GetComponent<PlayerSprite>();
-        _bulletPrefab = Game.AssetBundle.LoadAsset<GameObject>("PlayerBullet");
 
         var hurtBox = transform.Find("HurtBox");
 
@@ -52,17 +52,21 @@ public class Player : MonoBehaviour
             if (!_isInvincible)
             {
                 Health.Damage(Game.CalculateDamage(other.gameObject, gameObject));
-                Game.AudioSource.PlayOneShot(Resources.Audio.PlayerHurt);
+                Game.Instance.AudioSource.PlayOneShot(Resources.Audio.PlayerHurt);
             }
         });
     }
 
     protected void Update()
     {
-        Vector2 moveVector = _moveAxes.normalized * _speed;
+        if (!IsStopped)
+        {
+            Vector2 moveVector = _moveAxes.normalized * _speed;
 
-        _moveAxes = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        _velocity += moveVector;
+            _moveAxes = new(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            _velocity += moveVector;
+        }
+
         transform.Translate(_velocity * Time.deltaTime);
 
         if (Mathf.Abs(transform.position.x) > 5F)
@@ -117,9 +121,9 @@ public class Player : MonoBehaviour
             _spriteRenderer.flipX = true;
         }
 
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") && !IsStopped)
         {
-            var bulletGameObj = Instantiate(_bulletPrefab, GameObject.Find("Playism").transform);
+            var bulletGameObj = Instantiate(Resources.Prefabs.PlayerBullet, Game.Instance.Playism.transform);
             var bulletComponent = bulletGameObj.GetComponent<Bullet>();
 
             bulletGameObj.transform.position = _bulletSpawnTransform.position;

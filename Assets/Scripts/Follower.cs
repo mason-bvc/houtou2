@@ -7,6 +7,6 @@ public class Follower : MonoBehaviour
 
     protected void Update()
     {
-        transform.position = Vector3.MoveTowards(transform.position, Game.Player.transform.position, _speed * Time.deltaTime);
+        transform.position = Vector3.MoveTowards(transform.position, Game.Instance.Player.transform.position, _speed * Time.deltaTime);
     }
 }

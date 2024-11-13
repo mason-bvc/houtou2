@@ -16,7 +16,7 @@ public class EnemySpawner : MonoBehaviour
 
     protected virtual GameObject InstantiateEnemy()
     {
-        var enemy = Instantiate(EnemyPrefab);
+        var enemy = Instantiate(EnemyPrefab, Game.Instance.Playism.transform);
         enemy.transform.position = Util.RandomDirection * SPAWN_DISTANCE_FROM_CENTER_DEFAULT;
         return enemy;
     }

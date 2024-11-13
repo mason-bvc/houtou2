@@ -1,20 +1,22 @@
 ManifestFileVersion: 0
-CRC: 3303652396
+CRC: 3459611260
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 4efd0c4851d559c4c75f8d341498c234
+    Hash: 1cac7ebc5e983981758081198a6fbd49
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 072ea9a35d148b6171326f8c43a4d546
+    Hash: 28fc2d80c00614c8554c2f34d38a5a80
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 4efd0c4851d559c4c75f8d341498c234
+    Hash: 1cac7ebc5e983981758081198a6fbd49
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
+  Script: {instanceID: 0}
+- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -28,6 +30,10 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 74
   Script: {instanceID: 0}
+- Class: 81
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
 - Class: 83
   Script: {instanceID: 0}
 - Class: 91
@@ -35,33 +41,100 @@ ClassTypes:
 - Class: 95
   Script: {instanceID: 0}
 - Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 3954dd32c96ad774ab1b1d3dabd53d41, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 0a13344f39846f84fa909f0f4a45c1c7, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: a497a045942970e409e5399f3ee2c999, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: f4ceaa7b7dedfb24fb98a7ff82a3c7ba, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 4494e0bfd604be7479519da608bd6c59, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6f7adb5282694514ead679c0cf55ae95, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2d6dfdd188565914a8380e63931fcf7c, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 35c07160c2e267c43a95159deec1c204, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: a51bbc12e8697f849a8e485cd8811242, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8341a90bbe0d990459d634517aa661ba, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: ff25abd507d374c44a3236d678153b2a, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: f40a3806292edd745bc891bd22b8b11a, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: c875e407da82415498beee8bb7875920, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4f231c4fb786f3946a6b90b886c48677, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 553b9c60839567c4785b634c857c003a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e2827a19b6d4fdf4c8b417cf583ff4ef, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 212
   Script: {instanceID: 0}
 - Class: 213
   Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
 SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.RenderPipelines.Universal.Runtime
+  ClassName: UnityEngine.Rendering.Universal.TemporalAA/Settings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FaceInfo_Legacy
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FontAssetCreationSettings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.KerningTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Character
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontFeatureTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontWeightPair
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.VertexGradient
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.PersistentCallGroup
 - AssemblyName: UnityEngine.CoreModule
   ClassName: UnityEngine.Events.UnityEvent
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.FaceInfo
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.Glyph
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphMetrics
+- AssemblyName: UnityEngine.TextCoreFontEngineModule
+  ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
 Assets:
 - Assets/Textures/Corinne.png
 - Assets/Audio/Explosion1.wav
+- Assets/Prefabs/King.prefab
 - Assets/Textures/LaStakePortrait.png
 - Assets/Prefabs/PlayerBullet.prefab
 - Assets/Prefabs/Bird.prefab
@@ -70,4 +143,5 @@ Assets:
 - Assets/Textures/CorinnePortrait.png
 - Assets/Audio/PlayerHurt.wav
 - Assets/Audio/FairyDie.wav
+- Assets/Audio/CV3GameOver.mp3
 Dependencies: []

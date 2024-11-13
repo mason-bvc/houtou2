@@ -10,22 +10,22 @@ public class Game : MonoBehaviour
     //
     // components
     //
-    public static AudioSource AudioSource;
+    public AudioSource AudioSource;
 
     //
     // dialog stuff
     //
-    private static TMP_Text _dialog;
-    private static string _dialogText = "";
-    private static float _dialogTextVisibleRatio;
-    private static float _dialogT;
-    private static Image _dialogPortrait;
+    private TMP_Text _dialog;
+    private string _dialogText = "";
+    private float _dialogTextVisibleRatio;
+    private float _dialogT;
+    private Image _dialogPortrait;
 
     //
     // hud stuff
     //
-    private static TMP_Text _wave;
-    private static Image[] _hearts;
+    private TMP_Text _wave;
+    private Image[] _hearts;
 
     //
     // resources
@@ -35,11 +35,16 @@ public class Game : MonoBehaviour
     //
     // game state
     //
-    private static Background _background;
-    private static EnemySpawner _birdSpawner;
-    private static EnemySpawner _fairySpawner;
-    private static FunCamera _funCamera;
-    public static Player Player { get; protected set; }
+    private AudioSource _music;
+    private Background _background;
+    private EnemySpawner _birdSpawner;
+    private EnemySpawner _fairySpawner;
+    private FunCamera _funCamera;
+    private GameObject _dieCanvas;
+    private GameObject _menu;
+    public static Game Instance;
+    public GameObject Playism { get; protected set; }
+    public Player Player { get; protected set; }
 
     // Rationale: When you put the responsibility on either object to delete
     // itself based on the others' tag in their own scripts, you do two things.
@@ -124,7 +129,7 @@ public class Game : MonoBehaviour
         return 0.0F;
     }
 
-    private static void OnPlayerDamaged()
+    private void OnPlayerDamaged()
     {
         for (var i = _hearts.Length - 1; i >= 0; i--)
         {
@@ -136,9 +141,18 @@ public class Game : MonoBehaviour
             }
         }
 
+        IEnumerator DoDeathSequence()
+        {
+            yield return new WaitForSeconds(1.0F);
+            _dieCanvas.SetActive(true);
+            AudioSource.PlayOneShot(Resources.Audio.GameOver);
+        }
+
         if (Player.Health.GetHealth() <= 0.0F)
         {
-            Destroy(GameObject.Find("Playism"));
+            Destroy(Playism);
+            _music.Stop();
+            Instance.StartCoroutine(DoDeathSequence());
             return;
         }
 
@@ -147,18 +161,25 @@ public class Game : MonoBehaviour
 
     protected void Start()
     {
-        AssetBundle = AssetBundle.LoadFromFile("Assets/AssetBundles/assetbundle");
+        if (AssetBundle == null)
+        {
+            AssetBundle = AssetBundle.LoadFromFile("Assets/AssetBundles/assetbundle");
+        }
 
         Resources.Audio.Explosion1 = AssetBundle.LoadAsset<AudioClip>("Explosion1");
         Resources.Audio.PlayerHurt = AssetBundle.LoadAsset<AudioClip>("PlayerHurt");
         Resources.Audio.PlayerShoot = AssetBundle.LoadAsset<AudioClip>("PlayerShoot");
         Resources.Audio.FairyDie = AssetBundle.LoadAsset<AudioClip>("FairyDie");
+        Resources.Audio.GameOver = AssetBundle.LoadAsset<AudioClip>("CV3GameOver");
+        Resources.Prefabs.PlayerBullet = AssetBundle.LoadAsset<GameObject>("PlayerBullet");
         Resources.Prefabs.Bird = AssetBundle.LoadAsset<GameObject>("Bird");
         Resources.Prefabs.Fairy = AssetBundle.LoadAsset<GameObject>("Fairy");
         Resources.Sprites.CorrinePortrait = AssetBundle.LoadAsset<Sprite>("CorinnePortrait");
         Resources.Sprites.LaStakePortrait = AssetBundle.LoadAsset<Sprite>("LaStakePortrait");
 
+        Instance = this;
         AudioSource = GetComponent<AudioSource>();
+        Playism = GameObject.Find("Playism");
         _background = GameObject.Find("Playism/Background")?.GetComponent<Background>();
         _dialog = GameObject.Find("Playism/Canvas/Dialog")?.GetComponent<TMP_Text>();
         _dialogPortrait = GameObject.Find("Playism/Canvas/Portrait")?.GetComponent<Image>();
@@ -167,9 +188,14 @@ public class Game : MonoBehaviour
         _funCamera = GameObject.Find("Camera")?.GetComponent<FunCamera>();
         _hearts = GameObject.Find("Playism/Canvas/Hearts").GetComponentsInChildren<Image>();
         _wave = GameObject.Find("Playism/Canvas/WaveText")?.GetComponent<TMP_Text>();
+        _dieCanvas = GameObject.Find("DieCanvas");
+        _dieCanvas.SetActive(false);
+        _menu = GameObject.Find("Menu");
+        _menu.SetActive(false);
+        _music = GameObject.Find("Music")?.GetComponent<AudioSource>();
         Player = FindObjectOfType<Player>();
 
-        static IEnumerator PostPlayerInit()
+        IEnumerator PostPlayerInit()
         {
             yield return new WaitForEndOfFrame();
             Player.Health.Damaged.AddListener(OnPlayerDamaged);
@@ -190,6 +216,22 @@ public class Game : MonoBehaviour
         _dialogT = Mathf.Clamp(_dialogT, 0, 1);
         _dialogTextVisibleRatio = Mathf.Lerp(0, 1, _dialogT);
         _dialog.text = _dialogText[..(int)(_dialogText.Length * _dialogTextVisibleRatio)];
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            var val = !_menu.activeSelf;
+
+            _menu.SetActive(val);
+            Player.IsStopped = _menu.activeSelf;
+            // Playism.SetActive(!val);
+
+            // _music.UnPause();
+
+            // if (_menu.activeSelf)
+            // {
+            //     _music.Pause();
+            // }
+        }
     }
 
     private IEnumerator SetDialog(string text, float waitSeconds, Sprite portrait)

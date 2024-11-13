@@ -12,11 +12,12 @@ public static class Resources
         public static AudioClip PlayerHurt;
         public static AudioClip FairyDie;
         public static AudioClip Explosion1;
+        public static AudioClip GameOver;
     }
 
     public static class Prefabs
     {
-        public static GameObject Bullet;
+        public static GameObject PlayerBullet;
         public static GameObject Bird;
         public static GameObject Fairy;
     }
