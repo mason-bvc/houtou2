@@ -41,73 +41,15 @@ public class Game : MonoBehaviour
     private EnemySpawner _fairySpawner;
     private FunCamera _funCamera;
     private GameObject _dieCanvas;
+    private TMP_Text _dieCanvasText;
     private GameObject _menu;
+    private ScreenFlash _screenFlash;
+    private GameObject _laStake;
+    private TMP_Text _scoreText;
     public static Game Instance;
     public GameObject Playism { get; protected set; }
     public Player Player { get; protected set; }
-
-    // Rationale: When you put the responsibility on either object to delete
-    // itself based on the others' tag in their own scripts, you do two things.
-    // Number one, you rely on the execution order of the scripts of the
-    // respective game objects to handle deleting themselves in the proper
-    // order.* Number two, you give the game objects a weak awareness of each
-    // other, slightly increasing the coupling. Not only those, but you also
-    // increase the number of contribution points and "jumping around" you have
-    // to do in the codebase in order to change the deletion behavior. That all
-    // majorly sucks.
-
-    // Because this project is due very soon, rapid development concerns start
-    // to pile up quick. If this was an honest-to-God piece of software that
-    // was managed by a medium-large company that does sprints, kanbas, scrums,
-    // and all that crap, I would probably add a
-    // "TriggerEnter2DBehaviorProvider" that acts as somewhat of a Command
-    // Pattern Factory that itself decides what should be done when two
-    // colliders of two different tags hit each other in order to divide
-    // responsibilities, but I really do not have time or desire to prematurely
-    // abstract and architect like I'm a Gang of Four enthusiast from the
-    // mid-'90s.
-
-    // So in the end, we get a monolithic Game class, but we also get
-    // some dependency inversion and _some_ decoupling, at least between the
-    // two colliding objects. The objects themselves must still be coupled with
-    // this Game manager object since they have to directly call into its
-    // static fields because, again, time concerns. This can be alleviated with
-    // some simple dependency injection, but as far as I know, there is no
-    // event you can hook into that fires when a Transform is added to a scene
-    // wherein to "Inject" your "Dependencies" through a hypothetical
-    // higher-order object.
-
-    // * you could defer the deletion of the objects to the end of the frame,
-    // but you still run into problem number two.
-
-    // public static void HandleTriggerEnter2D(Collider2D collider1, Collider2D collider2)
-    // {
-    //     if (collider1.CompareTag(Global.TAG_ENEMY) && collider2.CompareTag(Global.TAG_PLAYER_BULLET))
-        // {
-            // TODO: do this only when it's a fairy
-            // for (var i = 0; i < 3; i++)
-            // {
-            //     var bird = Instantiate(Resources.Prefabs.Bird);
-            //     var birdComponent = bird.GetComponent<Bird>();
-
-            //     bird.transform.position = collider1.transform.position;
-            //     birdComponent.Direction = Util.RandomDirection;
-            // }
-
-    //         Destroy(collider1.transform.root.gameObject);
-    //         Destroy(collider2.transform.root.gameObject);
-    //         _audioSource.PlayOneShot(Resources.Audio.Explosion1);
-
-    //         return;
-    //     }
-
-    //     if (collider1.CompareTag(Global.TAG_PLAYER) && collider2.CompareTag(Global.TAG_HURT_PLAYER))
-    //     {
-    //         collider1.transform.root.GetComponent<Health>().Damage(25.0F);
-    //         _audioSource.PlayOneShot(Resources.Audio.PlayerHurt);
-    //         _funCamera.Shake();
-    //     }
-    // }
+    public int Score;
 
     public static float CalculateDamage(GameObject damager, GameObject victim)
     {
@@ -129,7 +71,7 @@ public class Game : MonoBehaviour
         return 0.0F;
     }
 
-    private void OnPlayerDamaged()
+    private void OnPlayerHealthUpdated()
     {
         for (var i = _hearts.Length - 1; i >= 0; i--)
         {
@@ -140,6 +82,16 @@ public class Game : MonoBehaviour
                 _hearts[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    private void OnPlayerHealed()
+    {
+        OnPlayerHealthUpdated();
+    }
+
+    private void OnPlayerDamaged()
+    {
+        OnPlayerHealthUpdated();
 
         IEnumerator DoDeathSequence()
         {
@@ -159,24 +111,13 @@ public class Game : MonoBehaviour
         _funCamera.Shake();
     }
 
+    protected void Awake()
+    {
+        AssetBundle = AssetLoader.AssetBundle;
+    }
+
     protected void Start()
     {
-        if (AssetBundle == null)
-        {
-            AssetBundle = AssetBundle.LoadFromFile("Assets/AssetBundles/assetbundle");
-        }
-
-        Resources.Audio.Explosion1 = AssetBundle.LoadAsset<AudioClip>("Explosion1");
-        Resources.Audio.PlayerHurt = AssetBundle.LoadAsset<AudioClip>("PlayerHurt");
-        Resources.Audio.PlayerShoot = AssetBundle.LoadAsset<AudioClip>("PlayerShoot");
-        Resources.Audio.FairyDie = AssetBundle.LoadAsset<AudioClip>("FairyDie");
-        Resources.Audio.GameOver = AssetBundle.LoadAsset<AudioClip>("CV3GameOver");
-        Resources.Prefabs.PlayerBullet = AssetBundle.LoadAsset<GameObject>("PlayerBullet");
-        Resources.Prefabs.Bird = AssetBundle.LoadAsset<GameObject>("Bird");
-        Resources.Prefabs.Fairy = AssetBundle.LoadAsset<GameObject>("Fairy");
-        Resources.Sprites.CorrinePortrait = AssetBundle.LoadAsset<Sprite>("CorinnePortrait");
-        Resources.Sprites.LaStakePortrait = AssetBundle.LoadAsset<Sprite>("LaStakePortrait");
-
         Instance = this;
         AudioSource = GetComponent<AudioSource>();
         Playism = GameObject.Find("Playism");
@@ -189,25 +130,33 @@ public class Game : MonoBehaviour
         _hearts = GameObject.Find("Playism/Canvas/Hearts").GetComponentsInChildren<Image>();
         _wave = GameObject.Find("Playism/Canvas/WaveText")?.GetComponent<TMP_Text>();
         _dieCanvas = GameObject.Find("DieCanvas");
+        _dieCanvasText = _dieCanvas.transform.Find("Text").GetComponent<TMP_Text>();
         _dieCanvas.SetActive(false);
         _menu = GameObject.Find("Menu");
         _menu.SetActive(false);
         _music = GameObject.Find("Music")?.GetComponent<AudioSource>();
+        _screenFlash = GameObject.Find("ScreenFlashCanvas/ScreenFlash")?.GetComponent<ScreenFlash>();
+        _scoreText = GameObject.Find("Playism/Canvas/ScoreText")?.GetComponent<TMP_Text>();
         Player = FindObjectOfType<Player>();
 
         IEnumerator PostPlayerInit()
         {
             yield return new WaitForEndOfFrame();
             Player.Health.Damaged.AddListener(OnPlayerDamaged);
+            Player.Health.Healed.AddListener(OnPlayerHealed);
         }
 
         StartCoroutine(PostPlayerInit());
+        // TODO: uncomment
         StartCoroutine(Sequence1());
         StartCoroutine(Sequence2());
         StartCoroutine(Sequence3());
         StartCoroutine(Sequence4());
         StartCoroutine(Sequence5());
         StartCoroutine(Sequence6());
+        StartCoroutine(Sequence7());
+        StartCoroutine(Sequence8());
+        StartCoroutine(Sequence9());
     }
 
     protected void Update()
@@ -216,6 +165,7 @@ public class Game : MonoBehaviour
         _dialogT = Mathf.Clamp(_dialogT, 0, 1);
         _dialogTextVisibleRatio = Mathf.Lerp(0, 1, _dialogT);
         _dialog.text = _dialogText[..(int)(_dialogText.Length * _dialogTextVisibleRatio)];
+        _scoreText.text = string.Format("{0:D7}", Score);
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -301,5 +251,115 @@ public class Game : MonoBehaviour
     {
         yield return new WaitForSeconds(60.0F * 4.0F + 6.0F);
         _background.Color = new Color(1.0F, 1.0F, 0.0F, 1.0F) / 2.0F;
+    }
+
+    private IEnumerator Sequence7()
+    {
+        // TODO: uncomment
+        yield return new WaitForSeconds(60.0F * 4.0F + 15.0F);
+        // yield return new WaitForSeconds(1);
+
+        foreach (var enemySpawner in FindObjectsOfType<EnemySpawner>())
+        {
+            enemySpawner.gameObject.SetActive(false);
+        }
+
+        foreach (var enemy in FindObjectsOfType<Mob>())
+        {
+            Destroy(enemy.gameObject);
+        }
+
+        _screenFlash.Color = Color.white;
+
+        yield return new WaitForSeconds(1);
+
+        Player.IsStopped = true;
+        _screenFlash.Color = Color.black;
+
+        yield return new WaitForSeconds(8);
+
+        _laStake = Instantiate(Resources.Prefabs.LaStake, Playism.transform);
+
+        var laStakeComponent = _laStake.GetComponent<LaStake>();
+
+        _laStake.transform.position = new Vector3(0, 6, 0);
+        Player.transform.position = new Vector3(0, -2, 0);
+        Player.AimTransform.up = Vector3.up;
+
+        _screenFlash.Color = new Color(0, 0, 0, 0);
+        _background.GetComponent<Renderer>().material = Resources.Materials.Background2;
+        yield return new WaitForSeconds(1);
+        // TODO: uncomment
+        yield return SetDialog("Took out your goons LaStake, now what?", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("Undo this now or I'll doom the both of us.", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("Ever the hasty one...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("The world you're from-", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("-is illusion as much as this one.", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("Spending eternity in this vacuum is no different-", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("-than your meaningless life at \"home\".", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("You're wrong. Unlike you, I have friends-", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("-and people who care about me.", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("My ambitions lie in something greater-", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("-than just power.", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("More meaningless human drivel.", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("Now if you'll allow me...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("to fully embody the lesson of...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("\"If you want something done right-\"", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("\"-DO IT YOURSELF!\"", 3.0F, Resources.Sprites.LaStakePortrait);
+        Player.IsStopped = false;
+        laStakeComponent.StartBeingMean();
+    }
+
+    private IEnumerator Sequence8()
+    {
+        // TODO: uncomment
+        yield return new WaitForSeconds(60.0F * 5.0F + 15.0F);
+        // yield return new WaitForSeconds(15);
+
+        _fairySpawner.gameObject.SetActive(true);
+        _birdSpawner.gameObject.SetActive(true);
+        StartCoroutine(_fairySpawner.BeginSpawn());
+        StartCoroutine(_birdSpawner.BeginSpawn());
+        _fairySpawner.CurrentMaxEnemies = 3;
+        _birdSpawner.CurrentMaxEnemies = 10;
+    }
+
+    private IEnumerator Sequence9()
+    {
+        // TODO: uncomment
+        yield return new WaitForSeconds(60.0F * 6.0F + 16.0F);
+        // yield return new WaitForSeconds(30.0F);
+
+        _laStake.GetComponent<LaStake>().StopBeingMean();
+        Player.IsStopped = true;
+
+        foreach (var enemySpawner in FindObjectsOfType<EnemySpawner>())
+        {
+            enemySpawner.gameObject.SetActive(false);
+        }
+
+        foreach (var bullet in FindObjectsOfType<LaStakeBullet>())
+        {
+            Destroy(bullet.gameObject);
+        }
+
+        foreach (var enemy in FindObjectsOfType<Mob>())
+        {
+            Destroy(enemy.gameObject);
+        }
+
+        yield return SetDialog("You look unusually pale, LaStake...", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("Do you need to take ten?", 3.0F, Resources.Sprites.CorrinePortrait);
+        yield return SetDialog("I'm *huff* fine *gasp* you...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("*gasping* insignificant...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("whelp...", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("*faints*", 3.0F, Resources.Sprites.LaStakePortrait);
+        yield return SetDialog("What a piece of work.", 3.0F, Resources.Sprites.CorrinePortrait);
+
+        _screenFlash.Color = new Color(0.0F, 0.0F, 0.0F, 1.0F);
+
+        yield return new WaitForSeconds(5.0F);
+        _dieCanvas.SetActive(true);
+        _dieCanvasText.text = "Corinne escaped!";
     }
 }

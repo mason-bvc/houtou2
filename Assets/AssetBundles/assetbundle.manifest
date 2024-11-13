@@ -1,15 +1,15 @@
 ManifestFileVersion: 0
-CRC: 3459611260
+CRC: 1307828948
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 1cac7ebc5e983981758081198a6fbd49
+    Hash: c88755d41124b40e7f56b95cd30c472c
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 28fc2d80c00614c8554c2f34d38a5a80
+    Hash: f07ccdaff33ca2601a98c516f7ea6fcb
   IncrementalBuildHash:
     serializedVersion: 2
-    Hash: 1cac7ebc5e983981758081198a6fbd49
+    Hash: c88755d41124b40e7f56b95cd30c472c
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -53,6 +53,8 @@ ClassTypes:
 - Class: 114
   Script: {fileID: 11500000, guid: f4ceaa7b7dedfb24fb98a7ff82a3c7ba, type: 3}
 - Class: 114
+  Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+- Class: 114
   Script: {fileID: 11500000, guid: 4494e0bfd604be7479519da608bd6c59, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 76c392e42b5098c458856cdf6ecaaaa1, type: 3}
@@ -88,6 +90,12 @@ ClassTypes:
   Script: {fileID: 11500000, guid: 553b9c60839567c4785b634c857c003a, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: e2827a19b6d4fdf4c8b417cf583ff4ef, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 382b7b7600d6c8447a09653f4af465d5, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 97330acaba81f8f4c862b6f50ff05be4, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 453794bff5e15874fbd766638dba395a, type: 3}
 - Class: 115
   Script: {instanceID: 0}
 - Class: 212
@@ -134,14 +142,21 @@ SerializeReferenceClassIdentifiers:
 Assets:
 - Assets/Textures/Corinne.png
 - Assets/Audio/Explosion1.wav
+- Assets/Materials/Background2.mat
 - Assets/Prefabs/King.prefab
 - Assets/Textures/LaStakePortrait.png
 - Assets/Prefabs/PlayerBullet.prefab
 - Assets/Prefabs/Bird.prefab
 - Assets/Audio/PlayerShoot.wav
+- Assets/Audio/Teleport.wav
 - Assets/Prefabs/Fairy.prefab
 - Assets/Textures/CorinnePortrait.png
 - Assets/Audio/PlayerHurt.wav
 - Assets/Audio/FairyDie.wav
+- Assets/Shaders/Background.shader
+- Assets/Shaders/Background2.shader
 - Assets/Audio/CV3GameOver.mp3
+- Assets/Prefabs/LaStakeBullet.prefab
+- Assets/Prefabs/LaStake.prefab
+- Assets/Materials/Background.mat
 Dependencies: []

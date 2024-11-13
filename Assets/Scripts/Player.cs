@@ -8,7 +8,6 @@ public class Player : MonoBehaviour
     private int _spriteRow;
     private Vector2 _moveAxes;
     private Vector2 _velocity;
-    private Transform _aimTransform;
     private Transform _bulletSpawnTransform;
     private Rigidbody2D _body;
     private SpriteRenderer _spriteRenderer;
@@ -16,6 +15,7 @@ public class Player : MonoBehaviour
     private PlayerSprite _playerSprite;
     private bool _isInvincible;
 
+    public Transform AimTransform;
     public Health Health;
     public bool IsStopped;
 
@@ -28,8 +28,8 @@ public class Player : MonoBehaviour
     protected void Start()
     {
         _sprites = Game.AssetBundle.LoadAssetWithSubAssets<Sprite>("Corinne");
-        _aimTransform = transform.Find("AimTransform");
-        _bulletSpawnTransform = _aimTransform?.Find("BulletSpawnTransform");
+        AimTransform = transform.Find("AimTransform");
+        _bulletSpawnTransform = AimTransform?.Find("BulletSpawnTransform");
         _audioSource = GetComponent<AudioSource>();
         _body = GetComponent<Rigidbody2D>();
         Health = GetComponent<Health>();
@@ -59,6 +59,11 @@ public class Player : MonoBehaviour
 
     protected void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Backslash))
+        {
+            Health.Heal(100);
+        }
+
         if (!IsStopped)
         {
             Vector2 moveVector = _moveAxes.normalized * _speed;
@@ -87,12 +92,15 @@ public class Player : MonoBehaviour
 
         _velocity = Vector2.Lerp(_velocity, Vector2.zero, _deceleration * Time.deltaTime);
 
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (!IsStopped)
+        {
+            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
-        mousePos.z = 0;
-        _aimTransform.up = mousePos - transform.position;
+            mousePos.z = 0;
+            AimTransform.up = mousePos - transform.position;
+        }
 
-        float a = Vector3.SignedAngle(Vector3.up, _aimTransform.up, Vector3.forward);
+        float a = Vector3.SignedAngle(Vector3.up, AimTransform.up, Vector3.forward);
 
         a += 180.0F;
         a -= 45.0F;
@@ -121,13 +129,13 @@ public class Player : MonoBehaviour
             _spriteRenderer.flipX = true;
         }
 
-        if (Input.GetButtonDown("Fire1") && !IsStopped)
+        if (Input.GetButtonDown("Fire1"))
         {
             var bulletGameObj = Instantiate(Resources.Prefabs.PlayerBullet, Game.Instance.Playism.transform);
             var bulletComponent = bulletGameObj.GetComponent<Bullet>();
 
             bulletGameObj.transform.position = _bulletSpawnTransform.position;
-            bulletComponent.Direction = _aimTransform.up;
+            bulletComponent.Direction = AimTransform.up;
             _audioSource.PlayOneShot(Resources.Audio.PlayerShoot);
         }
 

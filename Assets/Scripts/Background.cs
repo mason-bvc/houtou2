@@ -23,6 +23,10 @@ public class Background : MonoBehaviour
         _currentColor.r = Mathf.Lerp(_currentColor.r, _targetColor.r, Time.deltaTime);
         _currentColor.g = Mathf.Lerp(_currentColor.g, _targetColor.g, Time.deltaTime);
         _currentColor.b = Mathf.Lerp(_currentColor.b, _targetColor.b, Time.deltaTime);
-        _renderer.sharedMaterial.SetColor("_MainColor", _currentColor);
+
+        if (_renderer.material.HasColor("_MainColor"))
+        {
+            _renderer.material.SetColor("_MainColor", _currentColor);
+        }
     }
 }

@@ -8,6 +8,9 @@ public class Menu : MonoBehaviour
     private TMP_Text[] _labels;
     private int _activeLabel;
 
+    // [SerializeField]
+    // private GameObject _gamePrefab;
+
     protected void OnEnable()
     {
         _labels = transform.Find("MenuRoot").GetComponentsInChildren<TMP_Text>();
@@ -34,20 +37,18 @@ public class Menu : MonoBehaviour
         {
             var labelName = _labels[_activeLabel].gameObject.name;
 
+            // TODO: disgusting
             if (labelName == "NewGame")
             {
-                // var king = Game.AssetBundle.LoadAsset<GameObject>("King");
-
-                // Destroy(GameObject.Find("King"));
-
-                // var kingObj = Instantiate(king);
+                // TODO: hack
+                // Destroy(GameObject.Find("King(Clone)"));
+                // Instantiate(_gamePrefab);
 
                 SceneManager.LoadScene("Main");
             }
             else if (labelName == "Quit")
             {
                 Application.Quit();
-                UnityEditor.EditorApplication.isPlaying = false;
             }
         }
     }

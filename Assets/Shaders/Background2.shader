@@ -3,6 +3,7 @@ Shader "Unlit/Background2"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+        _MainColor ("Color", Color) = (0, 0, 1.0, 1.0)
     }
     SubShader
     {
@@ -34,6 +35,7 @@ Shader "Unlit/Background2"
 
             sampler2D _MainTex;
             float4 _MainTex_ST;
+            fixed4 _MainColor;
 
             v2f vert(appdata v)
             {

@@ -8,6 +8,9 @@ public abstract class Mob : MonoBehaviour
     [SerializeField]
     protected GameObject HurtBox;
 
+    [SerializeField]
+    protected int Score = 100;
+
     protected void Start()
     {
         Health = GetComponent<Health>();
@@ -21,6 +24,7 @@ public abstract class Mob : MonoBehaviour
         if (Health.GetHealth() <= 0.0F)
         {
             Game.Instance.AudioSource.PlayOneShot(Resources.Audio.Explosion1);
+            Game.Instance.Score += Score;
             Destroy(gameObject);
         }
     }
